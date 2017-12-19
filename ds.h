@@ -8,7 +8,7 @@
 #ifndef DS_H_
 #define DS_H_
 
-#include "MQTTClient.h"
+#include <gw/paho.mqtt/inc/MQTTClient.h>
 #include "gw/qr-coder/QR_Encode.h"
 
 typedef struct{
@@ -25,7 +25,7 @@ typedef struct{
 	}analysis;
 	struct{
 		int retained;
-		enum QoS Qos;
+		int Qos;
 		time_t lastSend;
 	}mqtt;
 	struct{
