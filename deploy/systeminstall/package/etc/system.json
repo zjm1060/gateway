@@ -1,0 +1,68 @@
+{
+	"config" : {
+		"cac" : [
+			{
+				"host" : "39.108.63.99",
+				"ifname" : "ppp0",
+				"port" : 8888,
+				"realData" : 1,
+				"useEncrypt" : 0
+			},
+			{
+				"host" : "10.68.34.26",
+				"ifname" : "ppp1",
+				"port" : 6700,
+				"useEncrypt" : 1
+			}
+		],
+		"device" : {
+			"did" : "20000000000000001",
+			"id" : "20000000000000001"
+		},
+		"elec" : {
+			"voltage" : {
+				"channel" : [
+					{
+						"max" : 235.400000,
+						"min" : 198,
+						"pt" : 1,
+						"rated" : 220
+					},
+					{
+						"max" : 235.400000,
+						"min" : 198,
+						"pt" : 1,
+						"rated" : 220
+					},
+					{
+						"max" : 235.400000,
+						"min" : 198,
+						"pt" : 1,
+						"rated" : 220
+					}
+				]
+			}
+		},
+		"msic" : {
+			"enableMaintain" : 1,
+			"mday" : 1,
+			"phase" : 1
+		},
+		"network" : {
+			"gprs" : [
+				{
+					"apn" : "cmnet",
+					"port" : "\/dev\/ttyS6",
+					"power" : 202
+				},
+				{
+					"apn" : "ZZHNDL.YDOA.HAAPN",
+					"passwd" : "test",
+					"port" : "\/dev\/ttyS10",
+					"power" : 77,
+					"user" : "test@ZZHNDL.YDOA.HAAPN"
+				}
+			]
+		}
+	}
+}

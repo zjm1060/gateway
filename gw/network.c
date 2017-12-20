@@ -23,6 +23,8 @@ static void login(struct mqttObj *mo)
 	log_info("send login");
 	if(mqtt_send(mo,topic,message,strlen(message)) != FAILURE){
 		opts.mqtt.lastSend = CurrentTime;
+	}else{
+		mqtt_stop(mo);
 	}
 }
 

@@ -1,0 +1,12 @@
+#!/bin/sh
+
+UPDATEFILE=$1
+TEMPDIR="/data/update"
+
+mkdir -p $TEMPDIR
+
+unzip $UPDATEFILE -d $TEMPDIR -q
+
+if [ -f "$TEMPDIR/update/setup.sh" ] ; then
+    sh "$TEMPDIR/update/setup.sh"
+fi
