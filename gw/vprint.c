@@ -65,14 +65,18 @@ char *getNodeVoltageState(void *p)
 	Node *ops = p;
 	static char tmp[128];
 
-	if((ops->Data.LineState.state) == 0){
-		return "0,0,0";
+	switch(ops->Config.deviceType){
+	case type_power_failure_1:{
+		if((ops->Data.D49H.LineState.state) == 0){
+			return "0,0,0";
+		}
+		snprintf(tmp,sizeof(tmp),"%s,%s,%s",
+				(ops->Data.D49H.LineState.P1)?"1":"0",
+				(ops->Data.D49H.LineState.P2)?"1":"0",
+				(ops->Data.D49H.LineState.P3)?"1":"0"
+						);
+		}break;
 	}
-	snprintf(tmp,sizeof(tmp),"%s,%s,%s",
-			(ops->Data.LineState.P1)?"1":"0",
-			(ops->Data.LineState.P2)?"1":"0",
-			(ops->Data.LineState.P3)?"1":"0"
-					);
 
 	return tmp;
 }

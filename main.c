@@ -40,17 +40,19 @@ int main(int argc,char *args[])
 
 	gpio_init();
 
+	gpio_set(GPIO_SYS_CTL,1);
+
 	Init_LCD();
 
 	Init_Timer();
 
 	config_init();
 
-	strcpy(opts.did,"asmkldnaskn");
+//	strcpy(opts.did,"asmkldnaskn");
 
 	zlog_init("/etc/zlog.conf");
 
-	log_start("qqw");
+	log_start("mqtt");
 
 //	snprintf(qr_msg,sizeof(qr_msg),
 //			opts.qr.url,
@@ -61,7 +63,7 @@ int main(int argc,char *args[])
 
 	opts.qr.width = EncodeData(QR_LEVEL_M,0,qr_msg,strlen(qr_msg),opts.qr.data);
 
-//	CreateThread("menu",menu_proc,NULL);
+	CreateThread("menu",menu_proc,NULL);
 	CreateThread("mqtt",network,NULL);
 
 	while (1) {

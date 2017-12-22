@@ -10,6 +10,10 @@
 
 #include <gw/paho.mqtt/inc/MQTTClient.h>
 
+#define MAX_MESSAGE_HANDLERS	(16)
+
+typedef void (*messageHandler)(MQTTClient_message *);
+
 struct mqttObj{
 	MQTTClient c;
 //	Network n;
@@ -23,6 +27,12 @@ struct mqttObj{
 	char *passwd;
 	char *host;
 	int port;
+
+    struct MessageHandlers
+    {
+        const char* topicFilter;
+        void (*fp) (MQTTClient_message*);
+    } messageHandlers[MAX_MESSAGE_HANDLERS];
 };
 
 int mqtt_connect(struct mqttObj *mo);

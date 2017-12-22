@@ -40,13 +40,15 @@ typedef struct{
 	struct{
 		uint32_t address;
 		deviceType deviceType;
-		uint32_t bitMask;
 	}Config;
 	struct{
-		NodeState NodeState;
-		LineState LineState;
-		time_t lastTime;
+		union{
+			uint32_t bitMask;
+			LineState LineState;
+		}D49H;
 	}Data;
+	NodeState NodeState;
+	time_t lastTime;
 }Node;
 
 struct list_head *NodeList(void);

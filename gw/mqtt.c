@@ -31,9 +31,73 @@ void mqtt_lost(void* context, char* cause)
 //	mqtt_connect(mo);
 }
 
+static char isTopicMatched(char* topicFilter, const char* topicName)
+{
+    char* curf = topicFilter;
+    char* curn = topicName;
+    char* curn_end = curn + strlen(topicName);//->lenstring.len;
+
+    while (*curf && curn < curn_end)
+    {
+        if (*curn == '/' && *curf != '/')
+            break;
+        if (*curf != '+' && *curf != '#' && *curf != *curn)
+            break;
+        if (*curf == '+')
+        {   // skip until we meet the next separator, or end of string
+            char* nextpos = curn + 1;
+            while (nextpos < curn_end && *nextpos != '/')
+                nextpos = ++curn + 1;
+        }
+        else if (*curf == '#')
+            curn = curn_end - 1;    // skip until end of string
+        curf++;
+        curn++;
+    };
+
+    return (curn == curn_end) && (*curf == '\0');
+}
+
+static int MQTTPacket_equals(const char * a, char* bptr)
+{
+	int alen = 0,
+		blen = 0;
+	char *aptr;
+
+	aptr = a;
+	alen = strlen(a);
+	blen = strlen(bptr);
+
+	return (alen == blen) && (strncmp(aptr, bptr, alen) == 0);
+}
+
+static int deliverMessage(struct mqttObj * c, const char * topicName, MQTTClient_message* message)
+{
+    int i;
+    int rc = MQTTCLIENT_FAILURE;
+
+    // we have to find the right message handler - indexed by topic
+    for (i = 0; i < MAX_MESSAGE_HANDLERS; ++i)
+    {
+        if (c->messageHandlers[i].topicFilter != 0 && (MQTTPacket_equals(topicName, (char*)c->messageHandlers[i].topicFilter) ||
+                isTopicMatched((char*)c->messageHandlers[i].topicFilter, topicName)))
+        {
+            if (c->messageHandlers[i].fp != NULL)
+            {
+                c->messageHandlers[i].fp(message);
+                rc = MQTTCLIENT_SUCCESS;
+            }
+        }
+    }
+
+    return rc;
+}
+
+
 int messageArrived(void* context, char* topicName, int topicLen, MQTTClient_message* message)
 {
-
+	struct mqttObj *mo = context;
+	return deliverMessage(mo,topicName,message);
 }
 
 int mqtt_connect(struct mqttObj *mo)
@@ -77,58 +141,11 @@ int mqtt_connect(struct mqttObj *mo)
 	}
 
 	return rc;
-#if 0
-	NetworkInit(&mo->n);
-
-	mo->n.ifname = mo->ifname;
-
-	int rc = NetworkConnect(&mo->n, mo->host, mo->port);
-	if(rc < 0){
-		printf("can't connect to %s:%d\n", mo->host, mo->port);
-		return rc;
-	}
-	MQTTClientInit(&mo->c, &mo->n, 3000, mo->sendBuf, 1024, mo->recvBuf, 1024);
-
-	MQTTPacket_connectData data = MQTTPacket_connectData_initializer;
-
-	data.keepAliveInterval = 300;
-	data.MQTTVersion = 3;
-	data.clientID.cstring = mo->clientid;
-	data.username.cstring = mo->username;
-	data.password.cstring = mo->passwd;
-
-	data.cleansession = 1;
-
-	if(mo->will){
-		data.willFlag = 1;
-		data.will.topicName.cstring = mo->will;
-		data.will.message.cstring = mo->willData.data;
-	}
-
-	log_info("Connecting to MQTT broker %s:%d", mo->host, mo->port);
-	rc = MQTTConnect(&mo->c, &data);
-	log_info("Connected (%d) %s",
-			rc,
-			rc>=0?(rc>5?mqtt_connect_error[6]:mqtt_connect_error[rc]):"unkown error");
-#endif
-	return rc;
 }
 
 int mqtt_send(struct mqttObj *mo,char *topic,char *msg,size_t msg_len)
 {
-#if 0
-	MQTTMessage m;
-
-	m.payload = msg;
-	m.payloadlen = msg_len;
-	m.retained = opts.mqtt.retained;
-	m.qos = opts.mqtt.Qos;
-
-	log_info("publish message to [%s]",topic);
-
-	return MQTTPublish(&mo->c,topic,&m);
-#endif
-	int rc;
+	int rc = MQTTCLIENT_FAILURE;
 	MQTTClient_message pubmsg = MQTTClient_message_initializer;
 	MQTTClient_deliveryToken dt;
 
@@ -153,14 +170,58 @@ void mqtt_stop(struct mqttObj *mo)
 {
 	log_info("mqtt stop...");
 	MQTTClient_destroy(&mo->c);
-//	NetworkDisconnect(&mo->n);
 }
+
+
+int MQTTSetMessageHandler(struct mqttObj* c, const char* topicFilter, messageHandler messageHandler)
+{
+    int rc = MQTTCLIENT_FAILURE;
+    int i = -1;
+
+    /* first check for an existing matching slot */
+    for (i = 0; i < MAX_MESSAGE_HANDLERS; ++i)
+    {
+        if (c->messageHandlers[i].topicFilter != NULL && strcmp(c->messageHandlers[i].topicFilter, topicFilter) == 0)
+        {
+            if (messageHandler == NULL) /* remove existing */
+            {
+                c->messageHandlers[i].topicFilter = NULL;
+                c->messageHandlers[i].fp = NULL;
+            }
+            rc = MQTTCLIENT_SUCCESS; /* return i when adding new subscription */
+            break;
+        }
+    }
+    /* if no existing, look for empty slot (unless we are removing) */
+    if (messageHandler != NULL) {
+        if (rc == MQTTCLIENT_FAILURE)
+        {
+            for (i = 0; i < MAX_MESSAGE_HANDLERS; ++i)
+            {
+                if (c->messageHandlers[i].topicFilter == NULL)
+                {
+                    rc = MQTTCLIENT_SUCCESS;
+                    break;
+                }
+            }
+        }
+        if (i < MAX_MESSAGE_HANDLERS)
+        {
+            c->messageHandlers[i].topicFilter = topicFilter;
+            c->messageHandlers[i].fp = messageHandler;
+        }
+    }
+    return rc;
+}
+
 
 void mqtt_subscribe(struct mqttObj *mo,char *topic,int qos,void (*cb)(MQTTClient_message *))
 {
 	log_info("subscribe: %s",topic);
 
-	MQTTClient_subscribe(mo->c,topic,qos);
+	if(MQTTClient_subscribe(mo->c,topic,qos) == MQTTCLIENT_SUCCESS){
+		MQTTSetMessageHandler(mo,topic,cb);
+	}
 }
 
 int mqtt_state(struct mqttObj *mo)

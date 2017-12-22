@@ -83,8 +83,8 @@ void ShowVal(void)
 			}
 		}
 
-		lcd_printf(width+5,width/2-12,"id:%s",opts.did);
-		lcd_string(width+5,width/2,"ÇëÉ¨Ãè¶şÎ¬Âë");
+		lcd_printf(width+5,5+width/2-12,"id:%s",opts.did);
+		lcd_string(width+5,5+width/2,"ÇëÉ¨Ãè¶şÎ¬Âë");
 	}
 
 	LCD_Refresh();
