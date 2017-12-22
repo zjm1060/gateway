@@ -24,7 +24,7 @@ deviceOpts opts = {
 void *menu_proc(void *args);
 void *network(void *args);
 
-const char *qr_text = "https://github.com/swex/QR-Image-embedded";
+
 int main(int argc,char *args[])
 {
 
@@ -39,6 +39,8 @@ int main(int argc,char *args[])
 	opts.mqtt.Qos = QOS1;
 
 	gpio_init();
+
+	gpio_set(GPIO_SYS_CTL,1);
 
 	Init_LCD();
 

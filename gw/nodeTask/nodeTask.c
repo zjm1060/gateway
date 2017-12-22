@@ -44,6 +44,17 @@ typedef struct{
 }tTial;
 #pragma pack()
 
+static int lostPower = 0;
+
+void powerFailure(void)
+{
+	log_info("power lost");
+
+//	system("poweroff");
+//
+//	gpio_set(GPIO_SYS_CTL,0);
+}
+
 void *Node_Task(void *args)
 {
 	pThreadData lpthis = args;
@@ -125,6 +136,13 @@ void *Node_Task(void *args)
 				n->Data.NodeState = Node_s_Lost;
 				do_alarm(mo,n,alarm_lost);
 			}
+		}
+
+		if(lostPower){
+//			do_alarm(mo,n,alarm_lost);
+			mqtt_stop(mo);
+			system("poweroff");
+			gpio_set(GPIO_SYS_CTL,0);
 		}
 	}
 }

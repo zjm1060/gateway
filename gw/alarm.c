@@ -11,7 +11,7 @@
 #include "ds.h"
 
 const char *alarm_text[alarm_all] = {
-	[0] = "{"
+	[alarm_normal] = "{"
 			"\"did\":\"%DEVICE_ID\","
 			"\"id\":\"%NODE_ADDR\","
 			"\"type\":%NODE_TYPE,"
@@ -21,7 +21,7 @@ const char *alarm_text[alarm_all] = {
 			"\"date\":\"%DATE\","
 			"\"time\":\"%TIME\""
 		"}",
-	[1] = "{"
+	[alarm_abnormal] = "{"
 			"\"did\":\"%DEVICE_ID\","
 			"\"id\":\"%NODE_ADDR\","
 			"\"type\":%NODE_TYPE,"
@@ -31,7 +31,7 @@ const char *alarm_text[alarm_all] = {
 			"\"date\":\"%DATE\","
 			"\"time\":\"%TIME\""
 		"}",
-	[2] = "{"
+	[alarm_lost] = "{"
 			"\"did\":\"%DEVICE_ID\","
 			"\"id\":\"%NODE_ADDR\","
 			"\"type\":%NODE_TYPE,"
@@ -41,7 +41,7 @@ const char *alarm_text[alarm_all] = {
 			"\"date\":\"%DATE\","
 			"\"time\":\"%TIME\""
 		"}",
-	[3] = "{"
+	[alarm_lost_recover] = "{"
 			"\"did\":\"%DEVICE_ID\","
 			"\"id\":\"%NODE_ADDR\","
 			"\"type\":%NODE_TYPE,"
@@ -51,7 +51,7 @@ const char *alarm_text[alarm_all] = {
 			"\"date\":\"%DATE\","
 			"\"time\":\"%TIME\""
 		"}",
-	[4] = "{"
+	[alarm_node_new] = "{"
 			"\"did\":\"%DEVICE_ID\","
 			"\"id\":\"%NODE_ADDR\","
 			"\"type\":%NODE_TYPE,"

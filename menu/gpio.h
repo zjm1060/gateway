@@ -35,4 +35,7 @@ int gpio_get(int fun);
 #define SET_RUN_LED()	gpio_set(GPIO_RUN_LED,1)
 #define CLR_RUN_LED()	gpio_set(GPIO_RUN_LED,0)
 
+#define GET_IO(i)	gpio_get(i)
+
+
 #endif /* MENU_GPIO_H_ */

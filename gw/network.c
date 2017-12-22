@@ -65,6 +65,9 @@ void *network(void *args)
 	mo.passwd = opts.passwd;
 	mo.port = opts.port;
 
+	mo.will = "";
+	mo.willData.data = "";
+
 	log_info("host: %s:%d",mo.host,mo.port);
 	log_info("clientid:%s",mo.clientid);
 	log_info("username:%s",mo.username);

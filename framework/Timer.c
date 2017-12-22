@@ -117,6 +117,11 @@ void StartWatchDog(void)
 #endif
 }
 
+__attribute__ ((weak)) void powerFailure(void)
+{
+
+}
+
 /*****************************************************************
 * ��������       : TimerProc
 * ��������       : *
@@ -147,12 +152,10 @@ void TimerProc(void)
 		}
 		PostMsg(MSG_TIMER,0,0);
 		WatchDog();
-#if 0
-		if(GET_IO(IO_PWR_PROBE) == 0){
-			PostMsg(MSG_POWERDOWN,0,0);
-			CLR_RUN_LED();
-			sleep(3);
-			PostMsg(MSG_DATABASE_OFF,0,0);
+#if 1
+		if(GET_IO(GPIO_POWER) == 0){
+			PostMsg(MSG_LOST_POWER,0,0);
+			powerFailure();
 #ifdef USE_WATCHDOG
 			close(WatchDogFd);
 #endif

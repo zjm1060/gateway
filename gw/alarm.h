@@ -14,7 +14,6 @@ typedef enum{
 	alarm_lost = 2,
 	alarm_lost_recover = 3,
 	alarm_node_new = 4,
-
 	alarm_all
 }alarm_t;
 
