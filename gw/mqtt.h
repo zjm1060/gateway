@@ -8,14 +8,18 @@
 #ifndef MQTT_H_
 #define MQTT_H_
 
-#include "MQTTClient.h"
+#include <gw/paho.mqtt/inc/MQTTClient.h>
+
+#define MAX_MESSAGE_HANDLERS	(16)
+
+typedef void (*messageHandler)(MQTTClient_message *);
 
 struct mqttObj{
 	MQTTClient c;
-	Network n;
+//	Network n;
 	const char *ifname;
 	const char *will;
-	MQTTLenString willData;
+	const char *willData;
 	unsigned char sendBuf[1024];
 	unsigned char recvBuf[1024];
 	char *clientid;
@@ -23,12 +27,18 @@ struct mqttObj{
 	char *passwd;
 	char *host;
 	int port;
+
+    struct MessageHandlers
+    {
+        const char* topicFilter;
+        void (*fp) (MQTTClient_message*);
+    } messageHandlers[MAX_MESSAGE_HANDLERS];
 };
 
 int mqtt_connect(struct mqttObj *mo);
 void mqtt_stop(struct mqttObj *mo);
 int mqtt_send(struct mqttObj *mo,char *topic,char *msg,size_t msg_len);
 int mqtt_state(struct mqttObj *mo);
-void mqtt_subscribe(struct mqttObj *mo,char *topic,int qos,void (*cb)(MessageData *));
+void mqtt_subscribe(struct mqttObj *mo,char *topic,int qos,void (*cb)(MQTTClient_message *));
 
 #endif /* MQTT_H_ */

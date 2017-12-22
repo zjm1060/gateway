@@ -5,8 +5,8 @@
  *      Author: zjm09
  */
 
+#include <gw/paho.mqtt/inc/MQTTClient.h>
 #include "framework/framework.h"
-#include "MQTTClient.h"
 #include "ds.h"
 #include "gw/qr-coder/QR_Encode.h"
 #include "log.h"
@@ -36,7 +36,7 @@ int main(int argc,char *args[])
 //	}
 
 	opts.mqtt.retained = 0;
-	opts.mqtt.Qos = QOS1;
+	opts.mqtt.Qos = 1;
 
 	gpio_init();
 
@@ -47,6 +47,8 @@ int main(int argc,char *args[])
 	Init_Timer();
 
 	config_init();
+
+//	strcpy(opts.did,"asmkldnaskn");
 
 	zlog_init("/etc/zlog.conf");
 

@@ -153,7 +153,7 @@ void TimerProc(void)
 		PostMsg(MSG_TIMER,0,0);
 		WatchDog();
 #if 1
-		if(GET_IO(GPIO_POWER) == 0){
+		if(GET_IO(GPIO_POWER) == 1){
 			PostMsg(MSG_LOST_POWER,0,0);
 			powerFailure();
 #ifdef USE_WATCHDOG

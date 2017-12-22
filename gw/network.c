@@ -12,6 +12,15 @@
 
 void *Node_Task(void *args);
 
+static int lostPower = 0;
+
+void powerFailure(void)
+{
+	log_info("power lost");
+	lostPower = 1;
+}
+
+
 static void login(struct mqttObj *mo)
 {
 	char topic[64];
@@ -21,16 +30,32 @@ static void login(struct mqttObj *mo)
 	snprintf(message,sizeof(message),"{\"id\":\"%s\",\"state\":\"OK\"}",opts.did);
 
 	log_info("send login");
-	if(mqtt_send(mo,topic,message,strlen(message)) != FAILURE){
+	if(mqtt_send(mo,topic,message,strlen(message)) == MQTTCLIENT_SUCCESS){
 		opts.mqtt.lastSend = CurrentTime;
 	}else{
 		mqtt_stop(mo);
 	}
 }
 
-static void timeSync(MessageData* md)
+static void poweroff(struct mqttObj *mo)
 {
-	MQTTMessage* message = md->message;
+	char topic[64];
+	char message[512];
+
+	snprintf(topic,sizeof(topic),"Client/Collectors/%s",opts.did);
+	snprintf(message,sizeof(message),"{\"id\":\"%s\",\"state\":\"poweroff\"}",opts.did);
+
+	log_info("send login");
+	if(mqtt_send(mo,topic,message,strlen(message)) == MQTTCLIENT_SUCCESS){
+		opts.mqtt.lastSend = CurrentTime;
+	}else{
+		mqtt_stop(mo);
+	}
+}
+
+static void timeSync(MQTTClient_message* md)
+{
+	MQTTClient_message* message = md->payload;
 	struct json *J;
 	int error;
 
@@ -51,13 +76,10 @@ void *network(void *args)
 {
 	struct mqttObj mo = {
 		.ifname = "ppp0",
-//		.clientid = {"1234567890"},
-//		.username = {"test"},
-//		.passwd = {"test"},
-//		.host = {"lhloao.com"},
-//		.port = 1883
 	};
 	int rc;
+//	char topic_will[64];
+//	char will[64];
 
 	mo.clientid = opts.did;
 	mo.host = opts.host;
@@ -65,8 +87,9 @@ void *network(void *args)
 	mo.passwd = opts.passwd;
 	mo.port = opts.port;
 
-	mo.will = "";
-	mo.willData.data = "";
+//	snprintf(topic_will,sizeof(topic_will),"Client/Collectors/%s",opts.did);
+//	mo.will = topic_will;
+//	mo.willData = "{}";
 
 	log_info("host: %s:%d",mo.host,mo.port);
 	log_info("clientid:%s",mo.clientid);
@@ -83,38 +106,32 @@ void *network(void *args)
 
 	login(&mo);
 
-	mqtt_subscribe(&mo,"Client/Server/timeSync",QOS2,timeSync);
+	mqtt_subscribe(&mo,"Client/Server/timeSync",2,timeSync);
 
 	CreateThread("Node",Node_Task,&mo);
 
 	while(1){
-//		if((mqtt_state(&mo) == 0)
-#if defined(MQTT_TASK)
-		MutexLock(&mo.c.mutex);
-#endif
-		rc = MQTTYield(&mo.c, 500);
-#if defined(MQTT_TASK)
-		MutexUnlock(&mo.c.mutex);
-#endif
-		if(rc == FAILURE){
-			log_info("closed by remote!");
-			mqtt_stop(&mo);
-			rc = mqtt_connect(&mo);
-			if(rc >= 0){
-//				login(&mo);
-//				onLine(&mo);
-//				mqtt_subscribe(&mo,"dc/cs/set/all",QOS2,messageSet);
-//				mqtt_subscribe(&mo,topic,QOS2,messageSet);
-				mqtt_subscribe(&mo,"Client/Server/timeSync",QOS2,timeSync);
-			}else{
-				mqtt_stop(&mo);
-			}
+		if(!MQTTClient_isConnected(mo.c)){
+			log_info("reconnect it...");
+			do{
+				sleep(5);
+				rc = mqtt_connect(&mo);
+			}while(rc < 0);
+
+			mqtt_subscribe(&mo,"Client/Server/timeSync",2,timeSync);
 		}
 
-		usleep(100*1000);
-
-		if(abs(opts.mqtt.lastSend - CurrentTime) > 250){
+		if(abs(opts.mqtt.lastSend - CurrentTime) > 600){
 			login(&mo);
+		}
+
+		if(lostPower){
+//			do_alarm(mo,n,alarm_lost);
+			poweroff(&mo);
+//			system("poweroff");
+//			gpio_set(GPIO_SYS_CTL,0);
+
+			exit(0);
 		}
 	}
 

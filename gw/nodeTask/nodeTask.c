@@ -91,16 +91,16 @@ void *Node_Task(void *args)
 								opts.analysis.node.Signal = p->Signal;
 								Node *n = isNodeExist(h->addr);
 								if(n){
-									if(n->Data.NodeState == Node_s_Lost){
+									if(n->NodeState == Node_s_Lost){
 										log_info("node state: Node_s_Normal");
-										n->Data.NodeState = Node_s_Normal;
+										n->NodeState = Node_s_Normal;
 										do_alarm(mo,n,alarm_lost_recover);
 									}
-									log_info("ST:%02X,LineState:%02X",p->ST,n->Data.LineState.state);
-									if((p->ST&n->Config.bitMask) != n->Data.LineState.state){
+									log_info("ST:%02X,LineState:%02X",p->ST,n->Data.D49H.LineState.state);
+									if((p->ST&n->Data.D49H.bitMask) != n->Data.D49H.LineState.state){
 										log_info("node state changed");
-										n->Data.LineState.state = p->ST&n->Config.bitMask;
-										if(p->ST&n->Config.bitMask){
+										n->Data.D49H.LineState.state = p->ST&n->Data.D49H.bitMask;
+										if(p->ST&n->Data.D49H.bitMask){
 											do_alarm(mo,n,alarm_abnormal);
 										}else{
 											do_alarm(mo,n,alarm_normal);
@@ -110,17 +110,17 @@ void *Node_Task(void *args)
 									n = addNode(h->addr);
 									log_info("new node add-in");
 									n->Config.deviceType = type_power_failure_1;
-									n->Config.bitMask = 0x0EU;
+									n->Data.D49H.bitMask = 0x0EU;
 									do_alarm(mo,n,alarm_node_new);
-									if(p->ST&n->Config.bitMask){
-										n->Data.LineState.state = p->ST&n->Config.bitMask;
+									if(p->ST&n->Data.D49H.bitMask){
+										n->Data.D49H.LineState.state = p->ST&n->Data.D49H.bitMask;
 										log_info("node state is abnormal");
 										do_alarm(mo,n,alarm_abnormal);
 									}
 								}
 
-								n->Data.NodeState = Node_s_Normal;
-								n->Data.lastTime = time(0);
+								n->NodeState = Node_s_Normal;
+								n->lastTime = time(0);
 							}
 						}break;
 					default:
@@ -131,19 +131,14 @@ void *Node_Task(void *args)
 
 		list_for_each(i,NodeList()){
 			Node *n = (void *)i;
-			if(n->Data.NodeState == Node_s_Normal && abs(n->Data.lastTime - time(0)) >= 3600){
+			if(n->NodeState == Node_s_Normal && abs(n->lastTime - time(0)) >= 3600){
 				log_info("[%08X] node state: Node_s_Lost",n->Config.address);
-				n->Data.NodeState = Node_s_Lost;
+				n->NodeState = Node_s_Lost;
 				do_alarm(mo,n,alarm_lost);
 			}
 		}
 
-		if(lostPower){
-//			do_alarm(mo,n,alarm_lost);
-			mqtt_stop(mo);
-			system("poweroff");
-			gpio_set(GPIO_SYS_CTL,0);
-		}
+
 	}
 }
 
