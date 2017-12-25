@@ -140,7 +140,69 @@ int mqtt_connect(struct mqttObj *mo)
 		return rc;
 	}
 
+	pthread_mutex_init(&mo->mutex,NULL);
+
+	log_info("Connecting OK");
+
 	return rc;
+}
+
+int mqttSend(struct mqttObj *mo,char *topic,char *msg,size_t msg_len)
+{
+	mqttMessgae *s = calloc(1,sizeof(mqttMessgae));
+
+	if(s){
+		strncpy(s->topic,topic,sizeof(s->topic));
+		strncpy(s->message,msg,sizeof(s->message));
+		s->msg_len = msg_len;
+		s->timestamp = CurrentTime;
+
+		pthread_mutex_lock(&mo->mutex);
+
+		if(mo->msg){
+			*mo->msgAdd = s;
+			mo->msgAdd = &s->next;
+		}
+		else{
+			mo->msg = s;
+			mo->msgAdd = &s->next;
+		}
+
+		pthread_mutex_unlock(&mo->mutex);
+
+		return MQTTCLIENT_SUCCESS;
+	}
+
+	return MQTTCLIENT_FAILURE;
+}
+
+int mqttQueueSend(struct mqttObj *mo)
+{
+	mqttMessgae *s;
+
+	if(!mo->msg){
+		return MQTTCLIENT_SUCCESS;
+	}
+
+	s = mo->msg;
+	if(abs((s->timestamp - CurrentTime)) < 180){
+		if(mqtt_send(mo,s->topic,s->message,s->msg_len) != MQTTCLIENT_SUCCESS){
+			mqtt_stop(mo);
+			return MQTTCLIENT_FAILURE;
+		}
+	}else{
+		log_info("drop mesg at:%d",s->timestamp);
+	}
+
+	pthread_mutex_lock(&mo->mutex);
+	mo->msg = s->next;
+	pthread_mutex_unlock(&mo->mutex);
+
+	free(s);
+
+	opts.mqtt.lastSend = CurrentTime;
+
+	return MQTTCLIENT_SUCCESS;
 }
 
 int mqtt_send(struct mqttObj *mo,char *topic,char *msg,size_t msg_len)
@@ -153,6 +215,8 @@ int mqtt_send(struct mqttObj *mo,char *topic,char *msg,size_t msg_len)
 	pubmsg.payloadlen = msg_len;
 	pubmsg.qos = opts.mqtt.Qos;
 	pubmsg.retained = opts.mqtt.retained;
+
+	log_info("topic:%s",topic);
 
 	rc = MQTTClient_publishMessage(mo->c, topic, &pubmsg, &dt);
 	if(rc != MQTTCLIENT_SUCCESS)
@@ -169,6 +233,7 @@ int mqtt_send(struct mqttObj *mo,char *topic,char *msg,size_t msg_len)
 void mqtt_stop(struct mqttObj *mo)
 {
 	log_info("mqtt stop...");
+	MQTTClient_disconnect(mo->c,3000);
 	MQTTClient_destroy(&mo->c);
 }
 

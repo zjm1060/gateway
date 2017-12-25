@@ -30,11 +30,13 @@ static void login(struct mqttObj *mo)
 	snprintf(message,sizeof(message),"{\"id\":\"%s\",\"state\":\"OK\"}",opts.did);
 
 	log_info("send login");
-	if(mqtt_send(mo,topic,message,strlen(message)) == MQTTCLIENT_SUCCESS){
-		opts.mqtt.lastSend = CurrentTime;
-	}else{
-		mqtt_stop(mo);
-	}
+//	if(mqtt_send(mo,topic,message,strlen(message)) == MQTTCLIENT_SUCCESS){
+//		opts.mqtt.lastSend = CurrentTime;
+//	}else{
+//		mqtt_stop(mo);
+//	}
+
+	mqttSend(mo,topic,message,strlen(message));
 }
 
 static void poweroff(struct mqttObj *mo)
@@ -46,11 +48,13 @@ static void poweroff(struct mqttObj *mo)
 	snprintf(message,sizeof(message),"{\"id\":\"%s\",\"state\":\"poweroff\"}",opts.did);
 
 	log_info("send login");
-	if(mqtt_send(mo,topic,message,strlen(message)) == MQTTCLIENT_SUCCESS){
-		opts.mqtt.lastSend = CurrentTime;
-	}else{
-		mqtt_stop(mo);
-	}
+//	if(mqtt_send(mo,topic,message,strlen(message)) == MQTTCLIENT_SUCCESS){
+//		opts.mqtt.lastSend = CurrentTime;
+//	}else{
+//		mqtt_stop(mo);
+//	}
+
+	mqttSend(mo,topic,message,strlen(message));
 }
 
 static void timeSync(MQTTClient_message* md)
@@ -104,7 +108,7 @@ void *network(void *args)
 
 	sleep(1);
 
-	login(&mo);
+//	login(&mo);
 
 	mqtt_subscribe(&mo,"Client/Server/timeSync",2,timeSync);
 
@@ -133,6 +137,10 @@ void *network(void *args)
 
 			exit(0);
 		}
+
+		mqttQueueSend(&mo);
+
+		usleep(500*1000);
 	}
 
 	return NULL;

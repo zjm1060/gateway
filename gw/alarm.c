@@ -76,10 +76,12 @@ void do_alarm(struct mqttObj *mo,Node *node,alarm_t t)
 
 	vprint(message,alarm_text[t],node);
 
-	if(mqtt_send(mo,topic,message,strlen(message)) == MQTTCLIENT_SUCCESS){
-		opts.mqtt.lastSend = CurrentTime;
-	}else{
-		mqtt_stop(mo);
-	}
+//	if(mqtt_send(mo,topic,message,strlen(message)) == MQTTCLIENT_SUCCESS){
+//		opts.mqtt.lastSend = CurrentTime;
+//	}else{
+//		mqtt_stop(mo);
+//	}
+
+	mqttSend(mo,topic,message,strlen(message));
 }
 

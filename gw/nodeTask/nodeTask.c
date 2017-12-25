@@ -44,16 +44,6 @@ typedef struct{
 }tTial;
 #pragma pack()
 
-static int lostPower = 0;
-
-void powerFailure(void)
-{
-	log_info("power lost");
-
-//	system("poweroff");
-//
-//	gpio_set(GPIO_SYS_CTL,0);
-}
 
 void *Node_Task(void *args)
 {
