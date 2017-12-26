@@ -25,24 +25,24 @@ struct _gpio_file_name{
 			.pin = PORT2PIN(PA,4),
 			.dir = 1,
 	},
-	[GPIO_ALARM_LED1] = {
-			.pin = PORT2PIN(PG,14),
-			.dir = 1,
-	},
-	[GPIO_ALARM_LED2] = {
-			.pin = PORT2PIN(PG,13),
-			.dir = 1,
-	},
-	[GPIO_ALARM_LED3] = {
-			.pin = PORT2PIN(PD,15),
-			.dir = 1,
-	},
+//	[GPIO_ALARM_LED1] = {
+//			.pin = PORT2PIN(PG,14),
+//			.dir = 1,
+//	},
+//	[GPIO_ALARM_LED2] = {
+//			.pin = PORT2PIN(PG,13),
+//			.dir = 1,
+//	},
+//	[GPIO_ALARM_LED3] = {
+//			.pin = PORT2PIN(PD,15),
+//			.dir = 1,
+//	},
 	[GPIO_RUN_LED] = {
-			.pin = PORT2PIN(PH,12),
+			.pin = PORT2PIN(PH,13),
 			.dir = 1,
 	},
 	[GPIO_NET_LED] = {
-			.pin = PORT2PIN(PF,13),
+			.pin = PORT2PIN(PD,6),
 			.dir = 1,
 	},
 	[GPIO_POWER] = {

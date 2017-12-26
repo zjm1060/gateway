@@ -77,6 +77,8 @@ void config_init(void)
 		exit(0);
 	}
 
+	strcpy(opts.host,config_get_string("lhloao.com:1883","config.device.host"));
+	opts.ssl.enable = config_get_integer(0,"config.ssl.enable");
 	strcpy(opts.did,config_get_string("1234567890","config.device.did"));
 	strcpy(opts.qr.url,config_get_string("https://www.baidu.com/s?wd=%s","config.qr.url"));
 

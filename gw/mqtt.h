@@ -9,7 +9,7 @@
 #define MQTT_H_
 
 #include "list.h"
-#include <gw/paho.mqtt/inc/MQTTClient.h>
+#include <MQTTClient.h>
 
 #define MAX_MESSAGE_HANDLERS	(16)
 
@@ -36,6 +36,10 @@ struct mqttObj{
 	char *passwd;
 	char *host;
 	int port;
+
+	struct{
+		int enable;
+	}ssl;
 
     struct MessageHandlers
     {

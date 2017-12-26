@@ -19,7 +19,7 @@ void config_save(void);
 
 //const char *config_get_string(const char *path,...);
 #define config_get_string(def,...)	json_exists(Config,__VA_ARGS__)?json_string(Config,__VA_ARGS__):def
-#define config_get_integer(...)	(int)json_number(Config,__VA_ARGS__)
+#define config_get_integer(def,...)	json_exists(Config,__VA_ARGS__)?(int)json_number(Config,__VA_ARGS__):def
 #define config_get_number(...)	json_number(Config,__VA_ARGS__)
 
 #define config_set_string(...)	json_setstring(Config,__VA_ARGS__)

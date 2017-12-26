@@ -71,7 +71,7 @@ void *Node_Task(void *args)
 			if(h->start == 0x68){
 				switch(h->T){
 					case type_power_failure_1:{
-							log_info("node :%08X",h->addr);
+							log_info("--->node :%08X",h->addr);
 							tPackage *p = (void *)h->data;
 							size = serial_read(sfd,p,sizeof(tPackage),1000);
 							log_dump(h,size+sizeof(tHeader));
@@ -86,7 +86,7 @@ void *Node_Task(void *args)
 										n->NodeState = Node_s_Normal;
 										do_alarm(mo,n,alarm_lost_recover);
 									}
-									log_info("ST:%02X,LineState:%02X",p->ST,n->Data.D49H.LineState.state);
+									log_info("ST:%02X,LineState:%02X,bitMask:%02X",p->ST,n->Data.D49H.LineState.state,n->Data.D49H.bitMask);
 									if((p->ST&n->Data.D49H.bitMask) != n->Data.D49H.LineState.state){
 										log_info("node state changed");
 										n->Data.D49H.LineState.state = p->ST&n->Data.D49H.bitMask;

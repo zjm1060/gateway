@@ -1,0 +1,28 @@
+{
+	"config" : {
+		"device" : {
+			"did" : "91883134",
+			"id" : "20000000000000001"
+		},
+		"network" : {
+			"gprs" : [
+				{
+					"apn" : "cmnet",
+					"led" : 236,
+					"port" : "\/dev\/ttyS4",
+					"power" : 76
+				},
+				{
+					"apn" : "ZZHNDL.YDOA.HAAPN",
+					"passwd" : "test",
+					"port" : "\/dev\/ttyS10",
+					"power" : 77,
+					"user" : "test@ZZHNDL.YDOA.HAAPN"
+				}
+			]
+		},
+		"qr" : {
+			"url" : "$[deviceID]"
+		}
+	}
+}

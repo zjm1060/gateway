@@ -90,12 +90,13 @@ void *network(void *args)
 	mo.username = opts.username;
 	mo.passwd = opts.passwd;
 	mo.port = opts.port;
+	mo.ssl.enable = opts.ssl.enable;
 
 //	snprintf(topic_will,sizeof(topic_will),"Client/Collectors/%s",opts.did);
 //	mo.will = topic_will;
 //	mo.willData = "{}";
 
-	log_info("host: %s:%d",mo.host,mo.port);
+	log_info("host: %s",mo.host);
 	log_info("clientid:%s",mo.clientid);
 	log_info("username:%s",mo.username);
 	log_info("password:%s",mo.passwd);

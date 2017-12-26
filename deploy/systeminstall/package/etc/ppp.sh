@@ -10,6 +10,8 @@ user=`dtctl config.network.gprs[$instance].user`
 passwd=`dtctl config.network.gprs[$instance].passwd`
 var=`dtctl config.network.gprs[$instance].port`
 port=${var:-'/dev/null'}
+var=`dtctl config.network.gprs[$instance].led`
+led=${var:-0}
 
 PPPID=0
 MUXID=0
@@ -23,14 +25,21 @@ echo "port:$port"
 
 echo $pwrctl > /sys/class/gpio/export
 echo out > /sys/class/gpio/gpio$pwrctl/direction
+echo $led > /sys/class/gpio/export
+echo out > /sys/class/gpio/gpio$led/direction
 
-PPP_OPTIOS="115200 noauth nodetach nocrtscts noipdefault usepeerdns "
+PPP_OPTIOS="115200 noauth nodetach nocrtscts noipdefault usepeerdns defaultroute "
 
 #echo pppd $port $PPP_OPTIOS unit $instance user '$user' password '$passwd' connect "chat -v -f /tmp/connect.$instance" 
 
 set_power()
 {
 	echo $1 > /sys/class/gpio/gpio$pwrctl/value
+}
+
+set_led()
+{
+	echo $1 > /sys/class/gpio/gpio$led/value
 }
 
 check_module()
@@ -114,6 +123,8 @@ doPPP()
 
 		start_pppd
 
+		set_led 0
+
 		while [[ true ]]; do
 			sleep 5
 
@@ -151,6 +162,7 @@ while [[ true ]]; do
 	user=`dtctl config.network.gprs[$instance].user`
 	passwd=`dtctl config.network.gprs[$instance].passwd`
 
+	set_led 1
 	set_power 0
 	sleep 1
 	set_power 1
@@ -169,6 +181,8 @@ while [[ true ]]; do
 			doPPP
 			break
 		fi
+
+		set_led 1
 
 		sleep 5
 

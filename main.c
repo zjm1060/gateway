@@ -5,7 +5,7 @@
  *      Author: zjm09
  */
 
-#include <gw/paho.mqtt/inc/MQTTClient.h>
+#include <MQTTClient.h>
 #include "framework/framework.h"
 #include "ds.h"
 #include "gw/qr-coder/QR_Encode.h"
@@ -18,7 +18,7 @@ deviceOpts opts = {
 	.username = {"test"},
 	.passwd = {"test"},
 	.host = {"lhloao.com"},
-	.port = 1883
+	.port = 8883
 };
 
 void *menu_proc(void *args);
@@ -47,6 +47,8 @@ int main(int argc,char *args[])
 	Init_Timer();
 
 	config_init();
+
+	gpio_set(GPIO_NET_LED, 1);
 
 //	strcpy(opts.did,"asmkldnaskn");
 

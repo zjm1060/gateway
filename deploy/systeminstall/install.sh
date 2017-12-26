@@ -24,6 +24,7 @@ mkdir -p $MOUNTPOINT/data
 cp -a $IMG_DIR/etc/* $MOUNTPOINT/etc
 cp -a $IMG_DIR/usr/* $MOUNTPOINT/usr
 cp -a $IMG_DIR/data/* $MOUNTPOINT/data
+cp -a $IMG_DIR/root/* $MOUNTPOINT/root
 
 sync
 # umount $MOUNTPOINT

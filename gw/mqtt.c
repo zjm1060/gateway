@@ -12,11 +12,11 @@
 
 static const char *mqtt_connect_error[] = {
 	"Success",
-	"Unsupported protocol version",
-	"Unqualified client identity",
-	"The server is not available",
-	"Invalid username or password",
-	"Unauthorized",
+	"Connection refused: Unacceptable protocol version",
+	"Connection refused: Identifier rejected",
+	"Connection refused: Server unavailable",
+	"Connection refused: Bad user name or password",
+	"Connection refused: Not authorized",
 	"Reserved Error"
 };
 
@@ -104,10 +104,11 @@ int mqtt_connect(struct mqttObj *mo)
 {
 	MQTTClient_connectOptions opts = MQTTClient_connectOptions_initializer;
 	MQTTClient_willOptions wopts = MQTTClient_willOptions_initializer;
+	MQTTClient_SSLOptions ssl = MQTTClient_SSLOptions_initializer;
 
 	int rc = 0;
 
-	log_info("Connecting to MQTT broker %s:%d", mo->host, mo->port);
+	log_info("Connecting to MQTT broker %s", mo->host);
 	rc = MQTTClient_create(&mo->c, mo->host, mo->clientid,
 				MQTTCLIENT_PERSISTENCE_DEFAULT, NULL);
 
@@ -134,13 +135,33 @@ int mqtt_connect(struct mqttObj *mo)
 		opts.will->topicName = mo->will;
 	}
 
+	if(mo->ssl.enable){
+		// CA File
+		ssl.trustStore = "/data/cert/cacert.pem";
+		// Client Key File
+		ssl.privateKey = "/data/cert/client-key.pem";
+		// Client Certificate File
+		ssl.keyStore = "/data/cert/client-cert.pem";
+
+		ssl.enabledCipherSuites = "DEFAULT";
+//		ssl.enableServerCertAuth = 1;
+
+		opts.ssl = &ssl;
+	}
+
+
 	rc = MQTTClient_connect(mo->c, &opts);
+	log_info("Connected (%d) %s",
+			rc,
+			rc>=0?(rc>5?mqtt_connect_error[6]:mqtt_connect_error[rc]):"unkown error");
 	if (rc != MQTTCLIENT_SUCCESS){
 		MQTTClient_destroy(&mo->c);
 		return rc;
 	}
 
 	pthread_mutex_init(&mo->mutex,NULL);
+
+	gpio_set(GPIO_NET_LED, 0);
 
 	log_info("Connecting OK");
 
@@ -235,6 +256,7 @@ void mqtt_stop(struct mqttObj *mo)
 	log_info("mqtt stop...");
 	MQTTClient_disconnect(mo->c,3000);
 	MQTTClient_destroy(&mo->c);
+	gpio_set(GPIO_NET_LED, 1);
 }
 
 

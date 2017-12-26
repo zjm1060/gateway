@@ -23,16 +23,16 @@ typedef enum{
 
 typedef union{
 	struct{
-		uint8_t P0:1;
-		uint8_t P1:1;
-		uint8_t P2:1;
-		uint8_t P3:1;
-		uint8_t P4:1;
-		uint8_t P5:1;
-		uint8_t P6:1;
-		uint8_t P7:1;
+		uint16_t P0:1;
+		uint16_t P1:1;
+		uint16_t P2:1;
+		uint16_t P3:1;
+		uint16_t P4:1;
+		uint16_t P5:1;
+		uint16_t P6:1;
+		uint16_t P7:1;
 	};
-	uint8_t state;
+	uint16_t state;
 }LineState;
 
 typedef struct{
@@ -41,8 +41,8 @@ typedef struct{
 		uint32_t address;
 		deviceType deviceType;
 	}Config;
-	struct{
-		union{
+	union{
+		struct{
 			uint32_t bitMask;
 			LineState LineState;
 		}D49H;

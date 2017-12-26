@@ -8,7 +8,7 @@
 #ifndef DS_H_
 #define DS_H_
 
-#include <gw/paho.mqtt/inc/MQTTClient.h>
+#include <MQTTClient.h>
 #include "gw/qr-coder/QR_Encode.h"
 
 typedef struct{
@@ -17,6 +17,9 @@ typedef struct{
 	char passwd[64];
 	char host[128];
 	int port;
+	struct{
+		int enable;
+	}ssl;
 	struct{
 		struct{
 			uint32_t currentAddress;
