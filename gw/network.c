@@ -85,8 +85,8 @@ void *network(void *args)
 //	char topic_will[64];
 //	char will[64];
 
-	mo.clientid = opts.did;
-	mo.host = opts.host;
+	mo.clientid = "test_abc";
+	mo.host = "ssl://192.168.1.53:8883";
 	mo.username = opts.username;
 	mo.passwd = opts.passwd;
 	mo.port = opts.port;
@@ -113,7 +113,7 @@ void *network(void *args)
 
 	mqtt_subscribe(&mo,"Client/Server/timeSync",2,timeSync);
 
-	CreateThread("Node",Node_Task,&mo);
+//	CreateThread("Node",Node_Task,&mo);
 
 	while(1){
 		if(!MQTTClient_isConnected(mo.c)){

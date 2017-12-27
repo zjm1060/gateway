@@ -135,16 +135,16 @@ int mqtt_connect(struct mqttObj *mo)
 		opts.will->topicName = mo->will;
 	}
 
-	if(mo->ssl.enable){
+	if(1 || mo->ssl.enable){
 		// CA File
-		ssl.trustStore = "/data/cert/cacert.pem";
+		ssl.trustStore = "/data/certs/cacert.pem";
 		// Client Key File
-		ssl.privateKey = "/data/cert/client-key.pem";
+		ssl.privateKey = "/data/certs/client-key.pem";
 		// Client Certificate File
-		ssl.keyStore = "/data/cert/client-cert.pem";
+		ssl.keyStore = "/data/certs/client-cert.pem";
 
 		ssl.enabledCipherSuites = "DEFAULT";
-//		ssl.enableServerCertAuth = 1;
+		ssl.enableServerCertAuth = 1;
 
 		opts.ssl = &ssl;
 	}

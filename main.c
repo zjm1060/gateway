@@ -38,17 +38,17 @@ int main(int argc,char *args[])
 	opts.mqtt.retained = 0;
 	opts.mqtt.Qos = 1;
 
-	gpio_init();
+//	gpio_init();
 
-	gpio_set(GPIO_SYS_CTL,1);
+//	gpio_set(GPIO_SYS_CTL,1);
 
-	Init_LCD();
+//	Init_LCD();
 
 	Init_Timer();
 
 	config_init();
 
-	gpio_set(GPIO_NET_LED, 1);
+//	gpio_set(GPIO_NET_LED, 1);
 
 //	strcpy(opts.did,"asmkldnaskn");
 
@@ -65,7 +65,7 @@ int main(int argc,char *args[])
 
 	opts.qr.width = EncodeData(QR_LEVEL_M,0,qr_msg,strlen(qr_msg),opts.qr.data);
 
-	CreateThread("menu",menu_proc,NULL);
+//	CreateThread("menu",menu_proc,NULL);
 	CreateThread("mqtt",network,NULL);
 
 	while (1) {

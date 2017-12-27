@@ -8,7 +8,7 @@
 #ifndef DS_H_
 #define DS_H_
 
-#include <MQTTClient.h>
+#include "MQTT/MQTTClient.h"
 #include "gw/qr-coder/QR_Encode.h"
 
 typedef struct{

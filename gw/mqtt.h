@@ -9,7 +9,7 @@
 #define MQTT_H_
 
 #include "list.h"
-#include <MQTTClient.h>
+#include "MQTT/MQTTClient.h"
 
 #define MAX_MESSAGE_HANDLERS	(16)
 
