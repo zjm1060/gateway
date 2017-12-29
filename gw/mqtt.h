@@ -38,7 +38,10 @@ struct mqttObj{
 	int port;
 
 	struct{
-		int enable;
+		char *CAFile;
+		char *clientKeyFile;
+		char *clientPassFile;
+		char *clientKeyPassword;
 	}ssl;
 
     struct MessageHandlers

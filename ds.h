@@ -19,6 +19,10 @@ typedef struct{
 	int port;
 	struct{
 		int enable;
+		char CAFile[256];
+		char clientKeyFile[256];
+		char clientPassFile[256];
+		char clientKeyPassword[256];
 	}ssl;
 	struct{
 		struct{

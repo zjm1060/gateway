@@ -85,12 +85,12 @@ void *network(void *args)
 //	char topic_will[64];
 //	char will[64];
 
-	mo.clientid = "test_abc";
-	mo.host = "ssl://192.168.1.53:8883";
+	mo.clientid = opts.did;
+	mo.host = opts.host;
 	mo.username = opts.username;
 	mo.passwd = opts.passwd;
 	mo.port = opts.port;
-	mo.ssl.enable = opts.ssl.enable;
+
 
 //	snprintf(topic_will,sizeof(topic_will),"Client/Collectors/%s",opts.did);
 //	mo.will = topic_will;
@@ -100,7 +100,22 @@ void *network(void *args)
 	log_info("clientid:%s",mo.clientid);
 	log_info("username:%s",mo.username);
 	log_info("password:%s",mo.passwd);
-
+	if(strlen(opts.ssl.CAFile)){
+		mo.ssl.CAFile = opts.ssl.CAFile;
+		log_info("CAFile:%s",mo.ssl.CAFile);
+	}
+	if(strlen(opts.ssl.clientKeyFile)){
+		mo.ssl.clientKeyFile = opts.ssl.clientKeyFile;
+		log_info("clientKeyFile:%s",mo.ssl.clientKeyFile);
+	}
+	if(strlen(opts.ssl.clientPassFile)){
+		mo.ssl.clientPassFile = opts.ssl.clientPassFile;
+		log_info("clientPassFile:%s",mo.ssl.clientPassFile);
+	}
+	if(strlen(opts.ssl.clientKeyPassword)){
+		mo.ssl.clientKeyPassword = opts.ssl.clientKeyPassword;
+		log_info("clientKeyPassword:%s",mo.ssl.clientKeyPassword);
+	}
 
 	do{
 		sleep(5);
@@ -113,7 +128,7 @@ void *network(void *args)
 
 	mqtt_subscribe(&mo,"Client/Server/timeSync",2,timeSync);
 
-//	CreateThread("Node",Node_Task,&mo);
+	CreateThread("Node",Node_Task,&mo);
 
 	while(1){
 		if(!MQTTClient_isConnected(mo.c)){
