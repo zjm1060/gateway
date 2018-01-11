@@ -44,4 +44,6 @@ typedef struct{
 
 extern  deviceOpts opts;
 
+#define __PACKED __attribute__((__packed__))
+
 #endif /* DS_H_ */
