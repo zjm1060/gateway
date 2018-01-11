@@ -19,6 +19,7 @@ typedef enum{
 
 typedef enum{
 	type_power_failure_1 = 0x49,
+	type_temp_sensor = 0x50,
 }deviceType;
 
 typedef union{
@@ -41,11 +42,18 @@ typedef struct{
 		uint32_t address;
 		deviceType deviceType;
 	}Config;
+	struct{
+		float battery;
+		int Signal;
+	}analyze;
 	union{
 		struct{
 			uint32_t bitMask;
 			LineState LineState;
 		}D49H;
+		struct{
+			float temp;
+		}D50H;
 	}Data;
 	NodeState NodeState;
 	time_t lastTime;

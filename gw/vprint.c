@@ -76,6 +76,10 @@ char *getNodeVoltageState(void *p)
 				(ops->Data.D49H.LineState.P3)?"1":"0"
 						);
 		}break;
+	case type_temp_sensor:{
+		snprintf(tmp,sizeof(tmp),"%f",
+						(ops->Data.D50H.temp));
+		}break;
 	}
 
 	return tmp;
@@ -120,11 +124,24 @@ char *getTimestamp(void *p)
 	return date;
 }
 
+char *getBattery(void *p)
+{
+	Node *ops = p;
+	static char tmp[128];
+
+	snprintf(tmp,sizeof(tmp),"%f",
+			ops->analyze.battery);
+
+	return tmp;
+}
+
 VarLIst __VarList[] = {
 	{"NODE_ADDR",getNodeAddr},
 //	{"NODE_NAME",getNodeName},
 	{"NODE_VOLSTATE",getNodeVoltageState},
+	{"NODE_STATE",getNodeVoltageState},
 	{"DEVICE_ID",getDeviceID},
+	{"BATTERY",getBattery},
 	{"NODE_TYPE",getNodeType},
 	{"TIMESTAMP",getTimestamp},
 	{"DATE",getDate},

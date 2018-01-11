@@ -18,6 +18,7 @@ const char *alarm_text[alarm_all] = {
 			"\"info\":0,"
 			"\"state\":[%NODE_VOLSTATE],"
 			"\"timestamp\":%TIMESTAMP,"
+			"\"battery\":%BATTERY,"
 			"\"date\":\"%DATE\","
 			"\"time\":\"%TIME\""
 		"}",
@@ -28,6 +29,7 @@ const char *alarm_text[alarm_all] = {
 			"\"info\":1,"
 			"\"state\":[%NODE_VOLSTATE],"
 			"\"timestamp\":%TIMESTAMP,"
+			"\"battery\":%BATTERY,"
 			"\"date\":\"%DATE\","
 			"\"time\":\"%TIME\""
 		"}",
@@ -38,6 +40,7 @@ const char *alarm_text[alarm_all] = {
 			"\"info\":2,"
 			"\"state\":[%NODE_VOLSTATE],"
 			"\"timestamp\":%TIMESTAMP,"
+			"\"battery\":%BATTERY,"
 			"\"date\":\"%DATE\","
 			"\"time\":\"%TIME\""
 		"}",
@@ -48,6 +51,7 @@ const char *alarm_text[alarm_all] = {
 			"\"info\":3,"
 			"\"state\":[%NODE_VOLSTATE],"
 			"\"timestamp\":%TIMESTAMP,"
+			"\"battery\":%BATTERY,"
 			"\"date\":\"%DATE\","
 			"\"time\":\"%TIME\""
 		"}",
@@ -57,9 +61,19 @@ const char *alarm_text[alarm_all] = {
 			"\"type\":%NODE_TYPE,"
 			"\"info\":4,"
 			"\"timestamp\":%TIMESTAMP,"
+			"\"battery\":%BATTERY,"
 			"\"date\":\"%DATE\","
 			"\"time\":\"%TIME\""
 		"}",
+//	[alarm_temp] = "{"
+//			"\"did\":\"%DEVICE_ID\","
+//			"\"id\":\"%NODE_ADDR\","
+//			"\"type\":%NODE_TYPE,"
+//			"\"info\":5,"
+//			"\"timestamp\":%TIMESTAMP,"
+//			"\"date\":\"%DATE\","
+//			"\"time\":\"%TIME\""
+//		"}",
 };
 
 void vprint(char *buffer,const char *format,void *p);
