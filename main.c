@@ -24,7 +24,6 @@ deviceOpts opts = {
 void *menu_proc(void *args);
 void *network(void *args);
 
-
 int main(int argc,char *args[])
 {
 

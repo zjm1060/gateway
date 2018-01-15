@@ -206,13 +206,13 @@ int mqttQueueSend(struct mqttObj *mo)
 	}
 
 	s = mo->msg;
-	if(abs((s->timestamp - CurrentTime)) < 180){
+	if(abs((s->timestamp - CurrentTime)) < 600){
 		if(mqtt_send(mo,s->topic,s->message,s->msg_len) != MQTTCLIENT_SUCCESS){
 			mqtt_stop(mo);
 			return MQTTCLIENT_FAILURE;
 		}
 	}else{
-		log_info("drop mesg at:%d",s->timestamp);
+		log_info("drop [%s] message at:%d",s->topic,s->timestamp);
 	}
 
 	pthread_mutex_lock(&mo->mutex);
