@@ -8,6 +8,7 @@
 #include "includes.h"
 #include "../menu.h"
 #include "../../ds.h"
+#include "version.h"
 
 const unsigned char Antenna[12] = {
 		0x00,0x7C,0x10,0x10,0x10,0x10,0x10,0x10,
@@ -69,6 +70,7 @@ void ShowVal(void)
 		lcd_printf(0,0,"GPRS:%s",getip("ppp0"));
 		lcd_printf(0,12,"eth: %s",getip("eth0"));
 		lcd_printf(0,24,"%08X %d dbm",opts.analysis.node.currentAddress,opts.analysis.node.Signal);
+		lcd_printf(0,36,"Ver: "VERSION_NUMBER);
 
 		lcd_string(6,52,DateTransform(time(0)));
 	}
