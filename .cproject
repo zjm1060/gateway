@@ -164,6 +164,7 @@
 									<listOptionValue builtIn="false" value="crypto"/>
 									<listOptionValue builtIn="false" value="zlog"/>
 								</option>
+								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.linker.flags.934851679" name="Linker flags (-Xlinker [option])" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.linker.flags" useByScannerDiscovery="false" valueType="stringList"/>
 								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.c.linker.input.348567926" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.c.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>

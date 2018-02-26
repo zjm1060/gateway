@@ -133,11 +133,11 @@ __attribute__ ((weak)) void powerFailure(void)
 void TimerProc(void)
 {
 	pTimerList list;
-	static clock_t t = 1000;
+	static uint32_t t = 1000;
 	struct list_head *i;
 
-//	if(t >= 40000000)
-//		t = 0;
+	if(t >= (1<<30))
+		t = 1000;
 	t += TIMER_INV;
 	if(t%1000 == 0){
 //		printf("%d\n",CurrentTime);
